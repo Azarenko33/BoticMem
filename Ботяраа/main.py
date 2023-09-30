@@ -10,11 +10,11 @@ bot = commands.Bot(command_prefix='!', intents=intents)
 
 @bot.event
 async def on_ready():
-    print(f'Вы вошли как - {bot.user}')
+    print(f'Привет, ты вошел как - {bot.user}')
 
 @bot.command()
 async def mem(ctx):
-    files = os.listdir('images')
+    files = os.listdir('images') 
     random_file = random.choice(files)
     file_path = os.path.join('images', random_file)
     
@@ -22,20 +22,16 @@ async def mem(ctx):
         picture = discord.File(f)
         await ctx.send(file=picture)
 
-@bot.command()
-async def joke(ctx):
-    # Используем API для получения случайной шутки
-    response = requests.get('https://v2.jokeapi.dev/joke/Any')
-    
-    if response.status_code == 200:
-        data = response.json()
-        if 'joke' in data:
-            await ctx.send(data['joke'])
-        elif 'setup' in data and 'delivery' in data:
-            await ctx.send(f"{data['setup']}\n*{data['delivery']}*")
-        else:
-            await ctx.send('Не удалось получить шутку :( .')
-    else:
-        await ctx.send('О нет, произошла ошибка с получением шутки :(.')
+def get_duck_image_url():    
+    url = 'https://random-d.uk/api/random'
+    res = requests.get(url)
+    data = res.json()
+    return data['url']
 
-bot.run("Токен бота")
+@bot.command()
+async def duck(ctx):
+    '''По команде duck вызывает функцию get_duck_image_url'''
+    image_url = get_duck_image_url()
+    await ctx.send(image_url)
+
+bot.run("Токен бота.")
